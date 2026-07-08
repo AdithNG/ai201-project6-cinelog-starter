@@ -55,6 +55,11 @@ Every AI-produced explanation and edit was verified by running the test suite (`
 
 **How I verified no conflict remains:** (1) `git log --merges origin/main..HEAD` returns nothing and `git log --graph` shows a straight line — no merge commits. (2) `grep` for integer film ID references in the watchlist code returns none. (3) `pytest tests/ -v` passes all 5 tests on top of the rebased main. (4) I ran an end-to-end check against an in-memory database: created films (whose IDs now come back as UUID strings), added them to a watchlist, confirmed dedup still raises `AlreadyInWatchlistError`, and confirmed `get_watchlist()` returns newest-first.
 
+## Commit History
+Final `git log --oneline origin/main..HEAD` after the interactive rebase — 14 commits, all in conventional format, one logical change each, no merge commits (history is linear on top of the rebased `main`):
+
+![git log --oneline showing rewritten conventional commit history](git-log-oneline.png)
+
 ## Beyond the review comments
 
 **404 on unknown film (small fix):** The add endpoint imported `FilmNotFoundError` but never caught it, so `POST /watchlist/<user_id>/add` with an unknown `film_id` returned a 500. The collection route returns 404 for the same case, so I added the matching `except FilmNotFoundError → 404` handler.
